@@ -126,6 +126,8 @@
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Obstacles.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

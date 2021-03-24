@@ -24,14 +24,19 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 			if (m_pRenderer != nullptr) // Renderer init success.
 			{
 				TEMA::Init();
-				TEMA::Load("BG.png", "bg");	// Map key is "bg"
+				TEMA::Load("BG.png", "bg");	// Map key is "bg" ( example Background )
 
-				TEMA::Load("layer01.png","L01");
+				TEMA::Load("layer01.png","L01");	// Background layers we are using
 				TEMA::Load("layer02.png","L02");
 				TEMA::Load("layer03.png","L03");
 				TEMA::Load("layer04.png","L04");
 				TEMA::Load("layer05.png","L05");
 				TEMA::Load("layer06.png","L06");
+
+				/* 
+				Obstacle and Player .png Loading here...
+				
+				*/			
 			}
 			else return false; // Renderer init fail.
 		}
@@ -44,26 +49,20 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	
 	// Fill the background vector now.
 	m_backgrounds.push_back(m_layer06);
-
 	m_backgrounds.push_back(m_layer05[1]);
-
 	m_backgrounds.push_back(m_layer05[0]);
-
 	m_backgrounds.push_back(m_layer04[1]);
-
 	m_backgrounds.push_back(m_layer04[0]);
-
 	m_backgrounds.push_back(m_layer03[1]);
-
 	m_backgrounds.push_back(m_layer03[0]);
-
 	m_backgrounds.push_back(m_layer02[1]);
-
 	m_backgrounds.push_back(m_layer02[0]);
-
 	m_backgrounds.push_back(m_layer01[1]);
-
 	m_backgrounds.push_back(m_layer01[0]);
+
+	/*
+		Fill m_obstacles here...
+	*/
 
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Init success!" << endl;
@@ -96,8 +95,20 @@ void Engine::HandleEvents()
 			break;
 		case SDL_KEYDOWN: // Try SDL_KEYUP instead.
 			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
 				m_bRunning = false;
-			break;
+				break;
+			}
+			if (SDL_SCANCODE_W)
+			{
+				// Player Jumps
+				break;
+			}
+			if (SDL_SCANCODE_S)
+			{
+				// Player Ducks / Rolls
+				break;
+			}
 		}
 	}
 }
@@ -117,7 +128,7 @@ bool Engine::KeyDown(SDL_Scancode c)
 
 void Engine::Update()
 {
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < m_backgrounds.size(); i++)
 		m_backgrounds[i].Update();
 	
 	//// Check if first background goes out of bounds.
@@ -157,7 +168,7 @@ void Engine::Render()
 	SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
 	// Render stuff.
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < m_backgrounds.size(); i++)
 		m_backgrounds[i].Render();
 		//SDL_RenderCopyF(m_pRenderer, TEMA::GetTexture("bg"), m_backgrounds[i].GetSrc(), m_backgrounds[i].GetDst());
 	
@@ -203,8 +214,29 @@ Engine& Engine::Instance()
 
 SDL_Renderer* Engine::GetRenderer() { return m_pRenderer; }
 
+// Render Functions for Objects...
+
 void Background::Render()
 {
 	SDL_RenderCopyF(Engine::Instance().GetRenderer(), TEMA::GetTexture(m_key), GetSrc(), GetDst());
+}
+
+void Obstacle::Render()
+{
+	SDL_RenderCopyF(Engine::Instance().GetRenderer(), TEMA::GetTexture(m_key), GetSrc(), GetDst());
+}
+
+void Player::Render()
+{
+	SDL_RenderCopyF(Engine::Instance().GetRenderer(), TEMA::GetTexture(m_key), GetSrc(), GetDst());
+}
+
+void Player::Update()
+{
+	// Player Controller...
+
+
+	// Player Collision...
+
 
 }

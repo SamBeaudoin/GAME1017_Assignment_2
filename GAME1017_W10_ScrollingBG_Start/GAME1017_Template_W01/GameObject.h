@@ -3,7 +3,6 @@
 #define _GAMEOBJECT_H_
 
 #include "SDL.h"
-#include "Engine.h"
 #include "Bound.h"
 #include "TextureManager.h"
 

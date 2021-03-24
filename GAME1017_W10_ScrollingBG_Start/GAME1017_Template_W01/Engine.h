@@ -6,6 +6,8 @@
 #include <vector>
 #include "GameObject.h"
 #include "Background.h"
+#include "Obstacles.h"
+#include "Player.h"
 
 using namespace std;
 // Do not include any macros, initialized properties or full function definitions in this header.
@@ -40,6 +42,16 @@ private: // Private properties.
 
 	std::vector<Background> m_backgrounds;
 
+	/*
+	* 
+	Obstacle m_obstacle01 = Obstacle()		Adding Obstacles in here...
+
+	
+	*/
+
+	std::vector<Obstacle> m_obstacles;
+
+	//Player
 	
 									
 
