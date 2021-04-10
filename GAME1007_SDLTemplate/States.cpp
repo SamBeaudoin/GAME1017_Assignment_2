@@ -195,6 +195,11 @@ void GameState::Update()
 	}
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
+	{
+		STMA::PushState(new PauseState);
+	}
+
 	if (m_isDead)
 		STMA::ChangeState(new LoseState);
 }
