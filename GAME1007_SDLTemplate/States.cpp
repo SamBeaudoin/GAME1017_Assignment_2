@@ -65,13 +65,6 @@ void GameState::Enter()
 	cout << "Entering GameState..." << endl;
 
 	// Load Textures
-	//m_pTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Astronaut.png");
-	//m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
-	//m_pEnemyTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/alienwithBorder.png");
-	//m_pLazerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/pinkbeam.png");
-	//m_pElazerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/greenbeam.png");
-	//m_pMarvinTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Marvin.png");
-
 	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Marvin.png");
 
 	m_pBGTexture1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer01.png");
@@ -107,51 +100,23 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer01[1]);
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
 
-
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
-	/*m_eLaser = Mix_LoadWAV("sfxs/laserpew.wav");
-	m_pDeath = Mix_LoadWAV("sfxs/explosion.wav");
-	m_pLaser = Mix_LoadWAV("sfxs/laser_shot.wav");
-	m_eDeath = Mix_LoadWAV("sfxs/zombie_pain.wav");*/
+	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
 	
-	m_player = new Sprite;
-	m_player->SetRects({ 0,0,100,100 }, { 150,560,100,100 }); // First {} is src rectangle, and second {} destination rect
-	/*m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
-	m_bg2.SetRects({ 0,0,1024,768 }, { 1024,0,1024,768 });*/
+	// Player Placing
+	m_player = new Player;
+	m_player->SetRects({ 0,0,100,100 }, { 150,560,100,100 }); 
 
 	Mix_PlayMusic(m_music, -1);	// 0-n for # of loops, -1 for infinite
 	Mix_VolumeMusic(20);	// 0 - 128
 
 	m_isDead = false;
-
-	/*if (m_player != nullptr)
-	{
-		for (int i = 0; i < m_bullets.size(); i++)
-		{
-			m_bullets[i]->SetRects({ 0,0,0,0 }, { m_player->GetDst()->x,m_player->GetDst()->y,0,0 });
-		}
-	}
-	for (int i = 0; i < m_enemies.size(); i++)
-	{
-		m_enemies[i]->SetRects({ 0,0,500,800 }, { 1050, rand() - 200 % HEIGHT, 20, 20 });
-	}
-	for (int i = 0; i < m_marvins.size(); i++)
-	{
-		m_marvins[i]->SetRects({ 0,0,100,100 }, { 1050, rand() - 200 % HEIGHT, 20, 20 });
-	}
-	for (int i = 0; i < m_enemyBullets.size(); i++)
-	{
-		for (size_t n = 0; n < m_enemies.size(); n++)
-		{
-			m_enemyBullets[i]->SetRects({ 0,0,125,75 }, { m_enemies[n]->GetDst()->x + 45, m_enemies[n]->GetDst()->y + 30, 0, 0 });
-		}
-	}*/
-	
 }
 
 void GameState::Update()
 {
+	// Background speed
 	m_backgrounds[0].GetDst()->x -= 0;
 	m_backgrounds[1].GetDst()->x -= 1;
 	m_backgrounds[2].GetDst()->x -= 1;
@@ -163,42 +128,48 @@ void GameState::Update()
 	m_backgrounds[8].GetDst()->x -= 4;
 	m_backgrounds[9].GetDst()->x -= 5;
 	m_backgrounds[10].GetDst()->x -= 5;
-
-	////Scroll the Backgrounds
-	//m_bg1.GetDst()->x -= m_speed / 2;
-	//m_bg2.GetDst()->x -= m_speed / 2;
-	//Wrap the backgrounds
 	
+	// Wrap backgrounds
 	for (int i = 0; i < m_backgrounds.size(); i++)
 	{
 		if (m_backgrounds[i].GetDst()->x <= -1024)
 			m_backgrounds[i].GetDst()->x = 1024;
 	}
 
-	//if (m_bg1.GetDst()->x <= -m_bg1.GetDst()->w) // if first background goes completely off screen
-	//{	// Bounce back to original positions
-	//	m_bg1.GetDst()->x = 0;
-	//	m_bg2.GetDst()->x = 1024;
-	//}
-
 	//Parse player movement
 	if (m_player != nullptr)
 	{
-		if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->GetDst()->y > 0)
-			m_player->GetDst()->y -= m_speed;
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
+		{
+			m_player->SetAccelY(-JUMPFORCE);
+			m_player->SetGrounded(false);
+		}
 		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->GetDst()->y < HEIGHT - m_player->GetDst()->h)
-			m_player->GetDst()->y += m_speed;
+		{
+			m_player->SetRolling(true);
+		}
 		if (Engine::Instance().KeyDown(SDL_SCANCODE_A) && m_player->GetDst()->x > 20)
-			m_player->GetDst()->x -= m_speed;
-		else if (Engine::Instance().KeyDown(SDL_SCANCODE_D) && m_player->GetDst()->x < WIDTH - m_player->GetDst()->w && m_player->GetDst()->x < 250)
-			m_player->GetDst()->x += m_speed;
+		{
+			m_player->SetAccelX(-1.0);
+		}
+		else if (Engine::Instance().KeyDown(SDL_SCANCODE_D) && m_player->GetDst()->x < WIDTH - m_player->GetDst()->w && m_player->GetDst()->x < 800)
+		{
+			m_player->SetAccelX(1.0);
+		}
 	}
+	m_player->Update();
+
+	if (m_player->GetDst()->y >= 560)
+	{
+		m_player->StopY();
+		m_player->SetY(560.0f);
+		m_player->SetGrounded(true);
+	}
+
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
 	if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
-	{
 		STMA::PushState(new PauseState);
-	}
 
 	if (m_isDead)
 		STMA::ChangeState(new LoseState);
@@ -220,28 +191,6 @@ void GameState::Render()
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture1, m_backgrounds[9].GetSrc(), m_backgrounds[9].GetDst());
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture1, m_backgrounds[10].GetSrc(), m_backgrounds[10].GetDst());
 
-	//SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture, m_bg1.GetSrc(), m_bg1.GetDst());
-	//SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture, m_bg2.GetSrc(), m_bg2.GetDst());
-
-	//for (int i = 0; i < m_bullets.size(); i++)
-	//{
-	//	m_bullets[i]->Render(Engine::Instance().GetRenderer(), m_pLazerTexture);
-	//}
-
-	//for (int i = 0; i < m_enemies.size(); i++)
-	//{
-	//	m_enemies[i]->Render(Engine::Instance().GetRenderer(), m_pEnemyTexture);
-	//}
-
-	//for (int i = 0; i < m_marvins.size(); i++)
-	//{
-	//	m_marvins[i]->Render(Engine::Instance().GetRenderer(), m_pMarvinTexture);
-	//}
-
-	//for (int i = 0; i < m_enemyBullets.size(); i++)
-	//{
-	//	m_enemyBullets[i]->Render(Engine::Instance().GetRenderer(), m_pElazerTexture);
-	//}
 
 	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 

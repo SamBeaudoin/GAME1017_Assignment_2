@@ -52,10 +52,7 @@ public:
 	virtual void Resume();
 
 private:
-	//SDL_Texture* m_pEnemyTexture;
-	//SDL_Texture* m_pLazerTexture;
-	//SDL_Texture* m_pElazerTexture;
-	//SDL_Texture* m_pMarvinTexture;
+	
 	SDL_Texture* m_pPlayerTexture;
 	SDL_Texture* m_pBGTexture1;
 	SDL_Texture* m_pBGTexture2;
@@ -63,9 +60,6 @@ private:
 	SDL_Texture* m_pBGTexture4;
 	SDL_Texture* m_pBGTexture5;
 	SDL_Texture* m_pBGTexture6;
-
-
-	//Sprite m_bg1, m_bg2;	
 	
 	// Backgrounds
 	Sprite m_backgroundLayer01[2];
@@ -78,33 +72,18 @@ private:
 	vector<Sprite> m_backgrounds;
 
 	// Player Pointer
-	Sprite* m_player = nullptr;	
+	Player* m_player = nullptr;	
 
-	//// Bullet Vector
-	//vector<Bullet*> m_bullets;
-
-	//// Enemy Bullet Vector
-	//vector<eBullet*> m_enemyBullets;
-
-	//// Enemy vector
-	//vector<Enemy*> m_enemies;
-
-	//// Marvin(Obstacles) vector
-	//vector<Marvins*> m_marvins;
+	
 
 	// Music
 	Mix_Music* m_music;
-	// Sound Effects
-	/*Mix_Chunk* m_pLaser;
-	Mix_Chunk* m_eLaser;
+	
 	Mix_Chunk* m_pDeath;
-	Mix_Chunk* m_eDeath;*/
+	
 
-	int m_speed = 5; // In-class initialization. Not normal.
-	/*int m_spawnTimer = 60;
-	int m_bulletTimer = 60;
-	int m_marvinTimer = 80;
-	int m_shotTimer = 0;*/
+	int m_speed = 5; 
+	
 
 	bool m_isDead;
 };

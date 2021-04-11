@@ -11,6 +11,8 @@
 #define FPS 60
 #define WIDTH 1024
 #define HEIGHT 768
+#define JUMPFORCE 50.0
+#define GRAV 4.0
 using namespace std;
 
 class Sprite
@@ -35,168 +37,53 @@ public:
 	}
 };
 
-class Marvins : public Sprite	// Using Enemy class as base
+class Player : public Sprite
 {
 private:
-	//SDL_Rect m_rect;	// for destination
-public:
-	Marvins(SDL_Rect spawnLoc)	// non-default
-	{
-		cout << "Constructing Marvin at..." << &(*this) << endl;
-		this->m_dst.x = spawnLoc.x;	//this-> is optional
-		this->m_dst.y = spawnLoc.y;
-		this->m_dst.w = 100;
-		this->m_dst.h = 100;
-		m_src = { 0,0,100,100 };
-	}
-	~Marvins()
-	{
-		cout << "De-allocating Marvin at " << &(*this) << endl;
-	}
-	void Update()
-	{
-		m_angle++;
-		this->m_dst.x -= 2.5;	// Speed O' Marvin going <- that way
-	}
-	void SetLoc(SDL_Point loc)
-	{
-		m_dst.x = loc.x;
-		m_dst.y = loc.y;
 
-	}
-	void Render(SDL_Renderer* rend, SDL_Texture* tex)
-	{
-		SDL_RenderCopyEx(rend, tex, &m_src, &m_dst, m_angle , NULL, SDL_FLIP_HORIZONTAL);
-	}
-};
+	bool m_grounded = false;
+	bool m_isRolling = false;
 
-class Enemy : public Sprite
-{
-private:
-	int m_frame = 0,		// frame counter
-		m_frameMax = 20,	// Number of frames to display each sprite
-		m_sprite = 0,		// Which sprites of the animation to display
-		m_spriteMax = 2;	// Number of sprites in the animation
+	double m_accelX = 0.0,
+		m_accelY = 0.0,
+		m_velX = 0.0,
+		m_maxVelX = 10.0,
+		m_velY = 0.0,
+		m_maxVelY = JUMPFORCE,
+		m_drag = 0.88,
+		m_grav = GRAV;
+
 public:
 
-	void Animate()
-	{
-		//Long way
-		//if (m_frame == m_frameMax) // Or m_frame++ and eliminate the m_frame++; line
-		//{
-		//	m_frame = 0;
-		//	m_sprite++;
-		//	if (m_sprite == m_spriteMax)	// Or ++m_sprite == m_spriteMax
-		//		m_sprite = 0;	// Or set to m_spriteMin if row has multiple animations
-		//	m_src.x = m_src.w * m_sprite;
-		//}
-		//m_frame++;
+	void SetAccelX(double a) { m_accelX = a; }
+	void SetAccelY(double a) { m_accelY = a; }	
 
-		//Short way
+	bool IsGrounded() { return m_grounded; }				   
+	void SetGrounded(bool g) { m_grounded = g; }	
 
-		if (m_frame++ % m_frameMax == 0)
-		{
-			m_src.x = (m_src.w + 90 ) * (m_sprite++ % (m_spriteMax)); // 128 * 0 is our sprite counter % max sprites 0,1,2,3,4,5,6,7 repeat
-		}
-	}
-	Enemy(SDL_Rect spawnLoc )	// non-default
-	{
-		cout << "Constructing Enemy at..." << &(*this) << endl;
-		this->m_dst.x = spawnLoc.x;	//this-> is optional
-		this->m_dst.y = spawnLoc.y;
-		this->m_dst.w = 200;
-		this->m_dst.h = 250;
-		this->m_src = { 0,0,400,728 };
-	}
-	~Enemy()
-	{
-		cout << "De-allocating Enemy at " << &(*this) << endl;
-	}
+	bool IsRolling() { return m_isRolling; }
+	void SetRolling(bool g) { m_isRolling = g; }
+
+	double GetVelX() { return m_velX; }						   
+	double GetVelY() { return m_velY; }		
+
+	void SetX(float y) { m_dst.x = y; }						   
+	void SetY(float y) { m_dst.y = y; }	
+
+	void StopY() { m_velY = 0.0; }
+
 	void Update()
 	{
-		this->m_dst.x -= 3.5;	// Speed O' Enemy going <- that way
-	}
-	void SetLoc(SDL_Point loc)
-	{
-		m_dst.x = loc.x;
-		m_dst.y = loc.y;
-	}
-	void Render(SDL_Renderer* rend, SDL_Texture* tex)
-	{
-		SDL_RenderCopyEx(rend, tex, &m_src, &m_dst, 0.0, NULL, SDL_FLIP_NONE);
-	}
-};
-
-
-class eBullet : public Sprite
-{
-private:
-	//SDL_Rect m_rect;	// for destination
-public:
-	eBullet(SDL_Rect spawnLoc = { 512 , 384 })	// non-default
-	{
-		cout << "Constructing Bullet at..." << &(*this) << endl;
-		this->m_dst.x = spawnLoc.x;	//this-> is optional
-		this->m_dst.y = spawnLoc.y;
-		this->m_dst.w = 80;
-		this->m_dst.h = 20;
-		m_src = { 0,0,125,75 };
-	}
-	~eBullet()
-	{
-		cout << "De-allocating enemy Bullet at " << &(*this) << endl;
-	}
-	void Update()
-	{
-		this->m_dst.x -= 9.5;	// Speed O' Bullet going <- that way
-	}
-	void SetLoc(SDL_Point loc)
-	{
-		m_dst.x = loc.x;
-		m_dst.y = loc.y;
-
-	}
-	void Render(SDL_Renderer* rend, SDL_Texture* tex)
-	{
-		SDL_RenderCopyEx(rend, tex, &m_src, &m_dst, 0.0, NULL, SDL_FLIP_NONE);
-
-	}
-};
-
-
-
-class Bullet : public Sprite
-{
-private:
-	//SDL_Rect m_rect;	// for destination
-public:
-	Bullet(SDL_Rect spawnLoc = {512 , 384})	// non-default
-	{
-		cout << "Constructing Bullet at..." << &(*this) << endl;
-		this->m_dst.x = spawnLoc.x;	//this-> is optional
-		this->m_dst.y = spawnLoc.y;
-		this->m_dst.w = 20;
-		this->m_dst.h = 40;
-		m_src = { 0,0,75,88 };
-	}
-	~Bullet()
-	{
-		cout << "De-allocating Bullet at " << &(*this) << endl;
-	}
-	void Update()
-	{
-		this->m_dst.x += 5;	// Speed O' Bullet going -> that way
-	}
-	void SetLoc(SDL_Point loc)
-	{
-		m_dst.x = loc.x;
-		m_dst.y = loc.y;
-
-	}
-	void Render(SDL_Renderer* rend, SDL_Texture* tex)
-	{
-		SDL_RenderCopyEx(rend, tex, &m_src, &m_dst, 90.0, NULL, SDL_FLIP_NONE);
-
+		// Do X axis first.
+		m_velX += m_accelX;
+		m_velX *= (m_grounded ? m_drag : 1);
+		m_velX = std::min(std::max(m_velX, -(m_maxVelX)), (m_maxVelX));
+		m_dst.x += (int)m_velX; 
+		// Now do Y axis.
+		m_velY += m_accelY + m_grav;
+		m_velY = std::min(std::max(m_velY, -(m_maxVelY)), (m_grav * 5));
+		m_dst.y += (int)m_velY; 
+		m_accelX = m_accelY = 0.0;
 	}
 };
 
