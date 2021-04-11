@@ -15,13 +15,39 @@
 #define GRAV 4.0
 using namespace std;
 
-class Sprite
+//class Sprite
+//{
+//protected:
+//	SDL_Rect m_src; // Source rectangle.
+//	SDL_Rect m_dst; // Destination rectangle.
+//	int m_angle = 0;
+//public:
+//	void SetRects(SDL_Rect s, SDL_Rect d)
+//	{
+//		m_src = s;
+//		m_dst = d;
+//	}
+//	SDL_Rect* GetSrc()
+//	{
+//		return &m_src;
+//	}
+//	SDL_Rect* GetDst()
+//	{
+//		return &m_dst;
+//	}
+//};
+
+class Sprite // Represents visual component of Box.
 {
 protected:
-	SDL_Rect m_src; // Source rectangle.
-	SDL_Rect m_dst; // Destination rectangle.
-	int m_angle = 0;
+	SDL_Rect m_src;
+	SDL_Rect m_dst; // Position on screen.
+	SDL_Color m_color; // Random color for box.
 public:
+	Sprite();
+	Sprite(const SDL_Rect r, const SDL_Color c);
+	void Render();
+	friend class Box; // Or make a setter for m_dst.
 	void SetRects(SDL_Rect s, SDL_Rect d)
 	{
 		m_src = s;
@@ -35,6 +61,24 @@ public:
 	{
 		return &m_dst;
 	}
+};
+
+class Box // Obstacle parent/proxy for the Sprite.
+{
+private:
+	SDL_Point m_pos; // Position on screen. Y is optional.
+	Sprite* m_pSprite; // Pointer to dynamic array of Sprites.
+	int m_numSprites;
+public:
+	Box(const SDL_Point p, bool hasSprite = false, int numSprites = 0,
+		const SDL_Rect r = { 0,0,0,0 }, const SDL_Color c = { 255,255,255,255 });
+	~Box();
+	Box* Clone();
+	void Update();
+	void Render();
+	const SDL_Point GetPos() { return m_pos; }
+	void AddSprite(const int index, const SDL_Rect r, const SDL_Color c);
+	void AddSprite(const int index, const Sprite& s);
 };
 
 class Player : public Sprite
@@ -86,6 +130,8 @@ public:
 		m_accelX = m_accelY = 0.0;
 	}
 };
+
+
 
 class Engine
 {

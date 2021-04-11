@@ -4,7 +4,8 @@
 
 #include "Engine.h"
 #include "SDL.h"
-
+#include <map>
+#include <vector>
 class State
 {
 public:
@@ -33,7 +34,6 @@ private:
 	Sprite m_title;
 	Sprite m_start;
 	Sprite m_bg1;
-
 	// Music
 	Mix_Music* m_music;
 	
@@ -70,7 +70,9 @@ private:
 	Sprite m_backgroundLayer06;
 
 	vector<Sprite> m_backgrounds;
-
+	vector<Box*> m_vec;
+	map<int, Box*> m_map;
+	int m_gapCtr = 0, m_gapMax = 3;
 	// Player Pointer
 	Player* m_player = nullptr;	
 
