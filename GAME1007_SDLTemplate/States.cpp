@@ -115,20 +115,20 @@ void GameState::Enter()
 	Mix_VolumeMusic(20);	// 0 - 128
 
 	m_isDead = false;
-	m_vec.reserve(9); // Canadian programming. Ensures push_back doesn't have to reallocated vector.
+	m_vec.reserve(18); // Canadian programming. Ensures push_back doesn't have to reallocated vector.
 	// Create the vector now.
-	for (int i = 0; i < 9; i++)
-		m_vec.push_back(new Box({ 128 * i,384 }));
+	for (int i = 0; i < 18; i++)
+		m_vec.push_back(new Box({ 64 * i,384 }));
 	// Populate the map with prototype Boxes.
-	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 384, 128, 128 }, { 255, 0, 0, 255 }));
-	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 0, 128, 320 }, { 0, 255, 0, 255 }));
-	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 384, 128, 64 }, { 0, 255, 255, 255 }));
+	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 }));
+	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 258, 64, 304}, { 0, 255, 0, 255 }));
+	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 562, 64, 64 }, { 0, 255, 255, 255 }));
 	m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
-	m_map[3]->AddSprite(0, { 1024, 384, 128, 128 }, { 255, 0, 0, 255 });
-	m_map[3]->AddSprite(1, { 1024, 0, 128, 192 }, { 0, 0, 255, 255 });
+	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
+	m_map[3]->AddSprite(1, { 1024, 0, 64, 256}, { 0, 0, 255, 255 });
 	m_map.emplace(4, new Box({ 1024, 384 }, true, 2));
-	m_map[4]->AddSprite(0, { 1024, 256, 128, 64 }, { 255, 0, 255, 255 });
-	m_map[4]->AddSprite(1, { 1024, 384, 128, 64 }, { 0, 255, 255, 255 });
+	m_map[4]->AddSprite(0, { 1024, 402, 64, 160}, { 255, 0, 255, 255 });
+	
 
 }
 
@@ -184,15 +184,6 @@ void GameState::Update()
 		m_player->SetGrounded(true);
 	}
 
-	SDL_RenderClear(Engine::Instance().GetRenderer());
-
-	if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
-		STMA::PushState(new PauseState);
-
-	if (m_isDead)
-		STMA::ChangeState(new LoseState);
-
-
 	// Check if first column of main vector goes out of bounds.
 	if (m_vec[0]->GetPos().x <= -128)
 	{
@@ -208,6 +199,17 @@ void GameState::Update()
 	// Scroll the boxes.
 	for (unsigned int i = 0; i < m_vec.size(); i++)
 		m_vec[i]->Update();
+
+	SDL_RenderClear(Engine::Instance().GetRenderer());
+
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
+		STMA::PushState(new PauseState);
+
+	if (m_isDead)
+		STMA::ChangeState(new LoseState);
+
+
+
 }
 
 void GameState::Render()
@@ -229,8 +231,7 @@ void GameState::Render()
 
 	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 
-	if (dynamic_cast<GameState*>(STMA::GetStates().back()))
-		State::Render();
+	
 
 
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 16, 32, 255);
@@ -243,7 +244,9 @@ void GameState::Render()
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 128, 0, 255);
 	SDL_RenderDrawLine(Engine::Instance().GetRenderer(), x1, y1, x2, y2);
 	// Draw anew.
-	SDL_RenderPresent(Engine::Instance().GetRenderer());
+
+	if (dynamic_cast<GameState*>(STMA::GetStates().back()))
+		State::Render();
 }
 
 void GameState::Exit()

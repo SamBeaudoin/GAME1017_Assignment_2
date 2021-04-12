@@ -72,7 +72,7 @@ private:
 	vector<Sprite> m_backgrounds;
 	vector<Box*> m_vec;
 	map<int, Box*> m_map;
-	int m_gapCtr = 0, m_gapMax = 3;
+	int m_gapCtr = 0, m_gapMax = 8;
 	// Player Pointer
 	Player* m_player = nullptr;	
 
