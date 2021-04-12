@@ -43,6 +43,7 @@ protected:
 	SDL_Rect m_src;
 	SDL_Rect m_dst; // Position on screen.
 	SDL_Color m_color; // Random color for box.
+	SDL_Texture* m_pTexture;
 public:
 	Sprite();
 	Sprite(const SDL_Rect r, const SDL_Color c);
@@ -60,6 +61,10 @@ public:
 	SDL_Rect* GetDst()
 	{
 		return &m_dst;
+	}
+	void setTexture(SDL_Texture* t)
+	{
+		m_pTexture = t;
 	}
 };
 

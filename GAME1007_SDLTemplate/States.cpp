@@ -77,6 +77,9 @@ void GameState::Enter()
 	m_pBGTexture5 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer05.png");
 	m_pBGTexture6 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer06.png");
 
+	m_pObstacle1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle3 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 
 	m_backgroundLayer01[0].SetRects({ 0,0,1920,1080 }, { 0,0,1024,768 });
 	m_backgroundLayer01[1].SetRects({ 0,0,1920,1080 }, { 1024,0,1024,768 });
@@ -104,8 +107,13 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer01[1]);
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
 
+	m_Obstacle1.SetRects({ 0,0,64,128 }, { 600,496,64,128 });
+	m_Obstacle2.SetRects({ 0,128,64,128 }, { 600,396,64,128 });
+	m_Obstacle3.SetRects({ 0,256,64,128 }, { 600,296,64,128 });
 
-
+	m_Obstacle1.setTexture(m_pObstacle1);
+	m_Obstacle2.setTexture(m_pObstacle2);
+	m_Obstacle3.setTexture(m_pObstacle3);
 
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
@@ -124,17 +132,21 @@ void GameState::Enter()
 	for (int i = 0; i < 18; i++)
 		m_vec.push_back(new Box({ 64 * i,384 }));
 	// Populate the map with prototype Boxes.
+
 	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 496, 64, 128 }, { 255, 0, 0, 255 }));
-	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 256, 64, 128}, { 0, 255, 0, 255 }));
-	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 384, 64, 128}, { 255, 0, 255, 255 }));
-	m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
+	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 256, 64, 128 }, { 0, 255, 0, 255 }));
+	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 384, 64, 128 }, { 255, 0, 255, 255 }));
+
+	m_map[0]->AddSprite(0, m_Obstacle1);
+	m_map[1]->AddSprite(0, m_Obstacle2);
+	m_map[2]->AddSprite(0, m_Obstacle3);
+
+	/*m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
 	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
 	m_map[3]->AddSprite(1, { 1024, 128, 64, 128}, { 0, 0, 255, 255 });
 	m_map.emplace(4, new Box({ 1024, 384 }, true, 2));
 	m_map[4]->AddSprite(0, { 1024, 560, 64, 64 }, { 0, 255, 255, 255 });
-	m_map[4]->AddSprite(1, { 1024, 128, 64, 128 }, { 255, 0, 255, 255 });
-	
-
+	m_map[4]->AddSprite(1, { 1024, 128, 64, 128 }, { 255, 0, 255, 255 });*/
 }
 
 void GameState::Update()
@@ -181,6 +193,7 @@ void GameState::Update()
 			m_player->SetAccelX(1.0);
 		}
 	}
+
 	m_player->Update();
 
 	if (m_player->GetDst()->y >= 530)
@@ -195,6 +208,8 @@ void GameState::Update()
 		m_player->GetDst()->h = 64;
 		m_player->GetDst()->y = 566;
 	}
+
+
 	// Check if first column of main vector goes out of bounds.
 	if (m_vec[0]->GetPos().x <= -128)
 	{
@@ -204,7 +219,7 @@ void GameState::Update()
 		m_vec.erase(m_vec.begin()); // Destroys first element of vector.
 		// Add a new Box element to the end.
 		if (m_gapCtr++ % m_gapMax == 0) // Add a new Box with obstacle(s).
-			m_vec.push_back(m_map[(rand() % 5)]->Clone()); // Pull random Box clone from map.
+			m_vec.push_back(m_map[(rand() % 3)]->Clone()); // Pull random Box clone from map.
 		else m_vec.push_back(new Box({ 1024,384 }, false)); // Add empty Box proxy.
 	}
 	// Scroll the boxes.

@@ -54,12 +54,17 @@ public:
 private:
 	
 	SDL_Texture* m_pPlayerTexture;
+
 	SDL_Texture* m_pBGTexture1;
 	SDL_Texture* m_pBGTexture2;
 	SDL_Texture* m_pBGTexture3;
 	SDL_Texture* m_pBGTexture4;
 	SDL_Texture* m_pBGTexture5;
 	SDL_Texture* m_pBGTexture6;
+
+	SDL_Texture* m_pObstacle1;
+	SDL_Texture* m_pObstacle2;
+	SDL_Texture* m_pObstacle3;
 	
 	Sprite m_backgroundLayer01[2];
 	Sprite m_backgroundLayer02[2];
@@ -68,10 +73,19 @@ private:
 	Sprite m_backgroundLayer05[2];
 	Sprite m_backgroundLayer06;
 
+	Sprite m_Obstacle1;
+	Sprite m_Obstacle2;
+	Sprite m_Obstacle3;
+
 	vector<Sprite> m_backgrounds;
+
+	// Box specific
 	vector<Box*> m_vec;
 	map<int, Box*> m_map;
+
 	int m_gapCtr = 0, m_gapMax = 8;
+
+
 	// Player Pointer
 	Player* m_player = nullptr;	
 	int playerindex = 0;
@@ -82,6 +96,7 @@ private:
 	Mix_Music* m_music;
 	
 	Mix_Chunk* m_pDeath;
+	Mix_Chunk* m_pJump;
 	
 
 	int m_speed = 5; 
