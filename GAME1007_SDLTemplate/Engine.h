@@ -11,7 +11,7 @@
 #define FPS 60
 #define WIDTH 1024
 #define HEIGHT 768
-#define JUMPFORCE 50.0
+#define JUMPFORCE 40.0
 #define GRAV 4.0
 using namespace std;
 

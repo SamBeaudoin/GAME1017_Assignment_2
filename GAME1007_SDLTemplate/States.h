@@ -61,7 +61,6 @@ private:
 	SDL_Texture* m_pBGTexture5;
 	SDL_Texture* m_pBGTexture6;
 	
-	// Backgrounds
 	Sprite m_backgroundLayer01[2];
 	Sprite m_backgroundLayer02[2];
 	Sprite m_backgroundLayer03[2];
@@ -75,6 +74,7 @@ private:
 	int m_gapCtr = 0, m_gapMax = 8;
 	// Player Pointer
 	Player* m_player = nullptr;	
+	int playerindex = 0;
 
 	
 

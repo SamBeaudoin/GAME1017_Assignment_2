@@ -68,7 +68,7 @@ void GameState::Enter()
 	cout << "Entering GameState..." << endl;
 
 	// Load Textures
-	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Marvin.png");
+	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/player.png");
 
 	m_pBGTexture1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer01.png");
 	m_pBGTexture2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer02.png");
@@ -76,6 +76,7 @@ void GameState::Enter()
 	m_pBGTexture4 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer04.png");
 	m_pBGTexture5 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer05.png");
 	m_pBGTexture6 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer06.png");
+
 
 	m_backgroundLayer01[0].SetRects({ 0,0,1920,1080 }, { 0,0,1024,768 });
 	m_backgroundLayer01[1].SetRects({ 0,0,1920,1080 }, { 1024,0,1024,768 });
@@ -103,13 +104,16 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer01[1]);
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
 
+
+
+
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
 	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
 	
 	// Player Placing
 	m_player = new Player;
-	m_player->SetRects({ 0,0,100,100 }, { 150,560,100,100 }); 
+	m_player->SetRects({ 0,0,64,100}, { 150,530,64,100 }); 
 
 	Mix_PlayMusic(m_music, -1);	// 0-n for # of loops, -1 for infinite
 	Mix_VolumeMusic(20);	// 0 - 128
@@ -156,6 +160,7 @@ void GameState::Update()
 	}
 
 	//Parse player movement
+	m_player->SetRolling(false);
 	if (m_player != nullptr)
 	{
 		if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
@@ -163,7 +168,7 @@ void GameState::Update()
 			m_player->SetAccelY(-JUMPFORCE);
 			m_player->SetGrounded(false);
 		}
-		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->GetDst()->y < HEIGHT - m_player->GetDst()->h)
+		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->IsGrounded())
 		{
 			m_player->SetRolling(true);
 		}
@@ -178,13 +183,18 @@ void GameState::Update()
 	}
 	m_player->Update();
 
-	if (m_player->GetDst()->y >= 560)
+	if (m_player->GetDst()->y >= 530)
 	{
 		m_player->StopY();
-		m_player->SetY(560.0f);
+		m_player->SetY(530.0f);
 		m_player->SetGrounded(true);
 	}
 
+	if (m_player->IsRolling())
+	{
+		m_player->GetDst()->h = 64;
+		m_player->GetDst()->y = 566;
+	}
 	// Check if first column of main vector goes out of bounds.
 	if (m_vec[0]->GetPos().x <= -128)
 	{
@@ -232,8 +242,30 @@ void GameState::Render()
 
 	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 
-	
+	//setRects({ 0,0,64,100 }, { 150,530,64,100 });
+	if (m_player->IsRolling())
+	{
+		m_player->GetSrc()->y = 136;
+		m_player->GetSrc()->h = 64;
+		
 
+	}
+	else
+	{
+		m_player->GetSrc()->y = 0;
+		m_player->GetSrc()->h = 100;
+		m_player->GetDst()->h = 100;
+	}
+
+	if (playerindex != 7)
+		playerindex++;
+	else playerindex = 0;
+
+	
+	m_player->GetSrc()->x = 64 * playerindex;
+
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
+	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), m_player->GetDst());
 
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 16, 32, 255);
 	// Render stuff.
