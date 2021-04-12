@@ -51,9 +51,9 @@ void Box::Render()
 	for (int i = 0; i < m_numSprites; i++)
 		m_pSprite[i].Render();
 	// Render white border. Extra for solution and supplemental video.
-	SDL_Rect m_dst = { m_pos.x, m_pos.y, 128, 128 };
+	SDL_Rect m_dst = { m_pos.x, m_pos.y, 64, 64 };
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
-	//SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &m_dst);
+	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &m_dst);
 }
 
 void Box::AddSprite(const int index, const SDL_Rect r, const SDL_Color c)

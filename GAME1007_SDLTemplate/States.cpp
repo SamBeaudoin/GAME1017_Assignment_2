@@ -120,14 +120,15 @@ void GameState::Enter()
 	for (int i = 0; i < 18; i++)
 		m_vec.push_back(new Box({ 64 * i,384 }));
 	// Populate the map with prototype Boxes.
-	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 }));
-	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 258, 64, 304}, { 0, 255, 0, 255 }));
-	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 562, 64, 64 }, { 0, 255, 255, 255 }));
+	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 496, 64, 128 }, { 255, 0, 0, 255 }));
+	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 256, 64, 128}, { 0, 255, 0, 255 }));
+	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 384, 64, 128}, { 255, 0, 255, 255 }));
 	m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
 	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
-	m_map[3]->AddSprite(1, { 1024, 0, 64, 256}, { 0, 0, 255, 255 });
+	m_map[3]->AddSprite(1, { 1024, 128, 64, 128}, { 0, 0, 255, 255 });
 	m_map.emplace(4, new Box({ 1024, 384 }, true, 2));
-	m_map[4]->AddSprite(0, { 1024, 402, 64, 160}, { 255, 0, 255, 255 });
+	m_map[4]->AddSprite(0, { 1024, 560, 64, 64 }, { 0, 255, 255, 255 });
+	m_map[4]->AddSprite(1, { 1024, 128, 64, 128 }, { 255, 0, 255, 255 });
 	
 
 }
