@@ -73,7 +73,7 @@ GameState::GameState() {}
 void GameState::Enter()
 {
 	cout << "Entering GameState..." << endl;
-
+	
 	// Load Textures
 	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/player.png");
 
@@ -87,6 +87,12 @@ void GameState::Enter()
 	m_pObstacle1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 	m_pObstacle2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 	m_pObstacle3 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle4 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle5 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle6 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle7 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle8 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle9 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 
 	m_backgroundLayer01[0].SetRects({ 0,0,1920,1080 }, { 0,0,1024,768 });
 	m_backgroundLayer01[1].SetRects({ 0,0,1920,1080 }, { 1024,0,1024,768 });
@@ -115,12 +121,24 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
 
 	m_Obstacle1.SetRects({ 0,0,64,128 }, { 600,436,64,128 });
-	m_Obstacle2.SetRects({ 0,128,64,128 }, { 600,500,64,128 });
-	m_Obstacle3.SetRects({ 0,298,64,86}, { 600,542,64,86 });
+	m_Obstacle2.SetRects({ 64,0,64,128 }, { 600,436,64,128 });
+	m_Obstacle3.SetRects({ 128,0,64,128 }, { 600,436,64,128 });
+	m_Obstacle4.SetRects({ 0,128,64,128 }, { 600,500,64,128 });
+	m_Obstacle5.SetRects({ 64,128,64,128 }, { 600,500,64,128 });
+	m_Obstacle6.SetRects({ 128,128,64,128 }, { 600,500,64,128 });
+	m_Obstacle7.SetRects({ 0,298,64,86}, { 600,542,64,86 });
+	m_Obstacle8.SetRects({ 64,298,64,86 }, { 600,542,64,86 });
+	m_Obstacle9.SetRects({ 128,298,64,86 }, { 600,542,64,86 });
 
 	m_Obstacle1.setTexture(m_pObstacle1);
 	m_Obstacle2.setTexture(m_pObstacle2);
 	m_Obstacle3.setTexture(m_pObstacle3);
+	m_Obstacle4.setTexture(m_pObstacle4);
+	m_Obstacle5.setTexture(m_pObstacle5);
+	m_Obstacle6.setTexture(m_pObstacle6);
+	m_Obstacle7.setTexture(m_pObstacle7);
+	m_Obstacle8.setTexture(m_pObstacle8);
+	m_Obstacle9.setTexture(m_pObstacle9);
 
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
@@ -143,10 +161,22 @@ void GameState::Enter()
 	m_map.emplace(0, new Box({ 1024, 384 }, true, 1));
 	m_map.emplace(1, new Box({ 1024, 384 }, true, 1));
 	m_map.emplace(2, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(3, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(4, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(5, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(6, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(7, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(8, new Box({ 1024, 384 }, true, 1));
 
 	m_map[0]->AddSprite(0, m_Obstacle1);
 	m_map[1]->AddSprite(0, m_Obstacle2);
 	m_map[2]->AddSprite(0, m_Obstacle3);
+	m_map[3]->AddSprite(0, m_Obstacle4);
+	m_map[4]->AddSprite(0, m_Obstacle5);
+	m_map[5]->AddSprite(0, m_Obstacle6);
+	m_map[6]->AddSprite(0, m_Obstacle7);
+	m_map[7]->AddSprite(0, m_Obstacle8);
+	m_map[8]->AddSprite(0, m_Obstacle9);
 
 	/*m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
 	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
@@ -168,8 +198,8 @@ void GameState::Update()
 	m_backgrounds[6].GetDst()->x -= 3;
 	m_backgrounds[7].GetDst()->x -= 4;
 	m_backgrounds[8].GetDst()->x -= 4;
-	m_backgrounds[9].GetDst()->x -= 5;
-	m_backgrounds[10].GetDst()->x -= 5;
+	m_backgrounds[9].GetDst()->x -= 6;
+	m_backgrounds[10].GetDst()->x -= 6;
 	
 	// Wrap backgrounds
 	for (int i = 0; i < m_backgrounds.size(); i++)
@@ -232,7 +262,7 @@ void GameState::Update()
 		m_vec.erase(m_vec.begin()); // Destroys first element of vector.
 		// Add a new Box element to the end.
 		if (m_gapCtr++ % m_gapMax == 0) // Add a new Box with obstacle(s).
-			m_vec.push_back(m_map[(rand() % 3)]->Clone()); // Pull random Box clone from map.
+			m_vec.push_back(m_map[(rand() % 9)]->Clone()); // Pull random Box clone from map.
 		else m_vec.push_back(new Box({ 1024,384 }, false)); // Add empty Box proxy.
 	}
 	// Scroll the boxes.

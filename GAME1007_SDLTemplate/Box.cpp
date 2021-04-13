@@ -1,6 +1,5 @@
 #include "Engine.h"
-#define SCROLLSPD 5
-
+#define SCROLLSPD 6
 //Sprite::Sprite() :m_dst({ 0,0,0,0 }), m_color({ 255,255,255,255 }) {}
 //Sprite::Sprite(const SDL_Rect r, const SDL_Color c) : m_dst(r), m_color(c) {}
 

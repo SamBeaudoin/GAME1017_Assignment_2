@@ -65,6 +65,12 @@ private:
 	SDL_Texture* m_pObstacle1;
 	SDL_Texture* m_pObstacle2;
 	SDL_Texture* m_pObstacle3;
+	SDL_Texture* m_pObstacle4;
+	SDL_Texture* m_pObstacle5;
+	SDL_Texture* m_pObstacle6;
+	SDL_Texture* m_pObstacle7;
+	SDL_Texture* m_pObstacle8;
+	SDL_Texture* m_pObstacle9;
 	
 	Sprite m_backgroundLayer01[2];
 	Sprite m_backgroundLayer02[2];
@@ -76,6 +82,13 @@ private:
 	Sprite m_Obstacle1;
 	Sprite m_Obstacle2;
 	Sprite m_Obstacle3;
+	Sprite m_Obstacle4;
+	Sprite m_Obstacle5;
+	Sprite m_Obstacle6;
+	Sprite m_Obstacle7;
+	Sprite m_Obstacle8;
+	Sprite m_Obstacle9;
+
 
 	vector<Sprite> m_backgrounds;
 
