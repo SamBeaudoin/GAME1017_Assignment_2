@@ -4,10 +4,15 @@
 //Sprite::Sprite() :m_dst({ 0,0,0,0 }), m_color({ 255,255,255,255 }) {}
 //Sprite::Sprite(const SDL_Rect r, const SDL_Color c) : m_dst(r), m_color(c) {}
 
+//void Sprite::Render()
+//{
+//	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
+//	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &m_dst);
+//}
+
 void Sprite::Render()
 {
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
-	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &m_dst);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pTexture, this->GetSrc(), this->GetDst());
 }
 
 Box::Box(const SDL_Point p, bool hasSprite, int numSprites, const SDL_Rect r,
@@ -51,9 +56,9 @@ void Box::Render()
 	for (int i = 0; i < m_numSprites; i++)
 		m_pSprite[i].Render();
 	// Render white border. Extra for solution and supplemental video.
-	SDL_Rect m_dst = { m_pos.x, m_pos.y, 64, 64 };
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
-	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &m_dst);
+	//SDL_Rect m_dst = { m_pos.x, m_pos.y, 64, 64 };
+	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
+	//SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &m_dst);
 }
 
 void Box::AddSprite(const int index, const SDL_Rect r, const SDL_Color c)
@@ -65,4 +70,14 @@ void Box::AddSprite(const int index, const SDL_Rect r, const SDL_Color c)
 void Box::AddSprite(const int index, const Sprite& s)
 {
 	this->m_pSprite[index] = s;
+}
+
+SDL_Rect* Box::GetRect()
+{
+	if (m_numSprites == 1)
+	{
+		return m_pSprite[0].GetDst();
+	}
+	else
+		return nullptr;
 }

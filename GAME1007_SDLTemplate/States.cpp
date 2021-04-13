@@ -36,9 +36,16 @@ void TitleState::Update()
 {
 	SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
 
-	if (SDL_PointInRect(&m_mousePos, m_start.GetDst()) && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+	if (SDL_PointInRect(&m_mousePos, m_start.GetDst()))
 	{
-		STMA::ChangeState(new GameState);
+		SDL_SetTextureColorMod(m_pStartButton, 150,150, 150);
+		if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			STMA::ChangeState(new GameState);
+		}
+	}
+	else {
+		SDL_SetTextureColorMod(m_pStartButton, 255, 255, 255);
 	}
 }
 
@@ -68,7 +75,7 @@ void GameState::Enter()
 	cout << "Entering GameState..." << endl;
 
 	// Load Textures
-	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Marvin.png");
+	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/player.png");
 
 	m_pBGTexture1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer01.png");
 	m_pBGTexture2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer02.png");
@@ -76,6 +83,10 @@ void GameState::Enter()
 	m_pBGTexture4 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer04.png");
 	m_pBGTexture5 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer05.png");
 	m_pBGTexture6 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer06.png");
+
+	m_pObstacle1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
+	m_pObstacle3 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 
 	m_backgroundLayer01[0].SetRects({ 0,0,1920,1080 }, { 0,0,1024,768 });
 	m_backgroundLayer01[1].SetRects({ 0,0,1920,1080 }, { 1024,0,1024,768 });
@@ -103,13 +114,21 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer01[1]);
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
 
+	m_Obstacle1.SetRects({ 0,0,64,128 }, { 600,436,64,128 });
+	m_Obstacle2.SetRects({ 0,128,64,128 }, { 600,500,64,128 });
+	m_Obstacle3.SetRects({ 0,298,64,86}, { 600,542,64,86 });
+
+	m_Obstacle1.setTexture(m_pObstacle1);
+	m_Obstacle2.setTexture(m_pObstacle2);
+	m_Obstacle3.setTexture(m_pObstacle3);
+
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
 	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
 	
 	// Player Placing
 	m_player = new Player;
-	m_player->SetRects({ 0,0,100,100 }, { 150,560,100,100 }); 
+	m_player->SetRects({ 0,0,64,100}, { 150,530,64,100 }); 
 
 	Mix_PlayMusic(m_music, -1);	// 0-n for # of loops, -1 for infinite
 	Mix_VolumeMusic(20);	// 0 - 128
@@ -120,17 +139,21 @@ void GameState::Enter()
 	for (int i = 0; i < 18; i++)
 		m_vec.push_back(new Box({ 64 * i,384 }));
 	// Populate the map with prototype Boxes.
-	m_map.emplace(0, new Box({ 1024, 384 }, true, 1, { 1024, 496, 64, 128 }, { 255, 0, 0, 255 }));
-	m_map.emplace(1, new Box({ 1024, 384 }, true, 1, { 1024, 256, 64, 128}, { 0, 255, 0, 255 }));
-	m_map.emplace(2, new Box({ 1024, 384 }, true, 1, { 1024, 384, 64, 128}, { 255, 0, 255, 255 }));
-	m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
+
+	m_map.emplace(0, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(1, new Box({ 1024, 384 }, true, 1));
+	m_map.emplace(2, new Box({ 1024, 384 }, true, 1));
+
+	m_map[0]->AddSprite(0, m_Obstacle1);
+	m_map[1]->AddSprite(0, m_Obstacle2);
+	m_map[2]->AddSprite(0, m_Obstacle3);
+
+	/*m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
 	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
 	m_map[3]->AddSprite(1, { 1024, 128, 64, 128}, { 0, 0, 255, 255 });
 	m_map.emplace(4, new Box({ 1024, 384 }, true, 2));
 	m_map[4]->AddSprite(0, { 1024, 560, 64, 64 }, { 0, 255, 255, 255 });
-	m_map[4]->AddSprite(1, { 1024, 128, 64, 128 }, { 255, 0, 255, 255 });
-	
-
+	m_map[4]->AddSprite(1, { 1024, 128, 64, 128 }, { 255, 0, 255, 255 });*/
 }
 
 void GameState::Update()
@@ -156,6 +179,7 @@ void GameState::Update()
 	}
 
 	//Parse player movement
+	m_player->SetRolling(false);
 	if (m_player != nullptr)
 	{
 		if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
@@ -163,7 +187,7 @@ void GameState::Update()
 			m_player->SetAccelY(-JUMPFORCE);
 			m_player->SetGrounded(false);
 		}
-		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->GetDst()->y < HEIGHT - m_player->GetDst()->h)
+		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->IsGrounded())
 		{
 			m_player->SetRolling(true);
 		}
@@ -176,30 +200,48 @@ void GameState::Update()
 			m_player->SetAccelX(1.0);
 		}
 	}
+
 	m_player->Update();
 
-	if (m_player->GetDst()->y >= 560)
+	if (m_player->GetDst()->y >= 530)
 	{
 		m_player->StopY();
-		m_player->SetY(560.0f);
+		m_player->SetY(530.0f);
 		m_player->SetGrounded(true);
 	}
+
+	if (m_player->IsRolling())
+	{
+		m_player->GetDst()->h = 64;
+		m_player->GetDst()->y = 566;
+	}
+
 
 	// Check if first column of main vector goes out of bounds.
 	if (m_vec[0]->GetPos().x <= -128)
 	{
+		m_score++;
+		cout << m_score << endl;
 		// Pop the first vector element/column off.
 		delete m_vec[0]; // Deallocate Box via pointer.
 		m_vec[0] = nullptr; // Optional wrangle.
 		m_vec.erase(m_vec.begin()); // Destroys first element of vector.
 		// Add a new Box element to the end.
 		if (m_gapCtr++ % m_gapMax == 0) // Add a new Box with obstacle(s).
-			m_vec.push_back(m_map[(rand() % 5)]->Clone()); // Pull random Box clone from map.
+			m_vec.push_back(m_map[(rand() % 3)]->Clone()); // Pull random Box clone from map.
 		else m_vec.push_back(new Box({ 1024,384 }, false)); // Add empty Box proxy.
 	}
 	// Scroll the boxes.
 	for (unsigned int i = 0; i < m_vec.size(); i++)
+	{
 		m_vec[i]->Update();
+	}
+	/*for (unsigned i = 0; i < m_map.size(); i++)
+	{
+		if (SDL_HasIntersection(m_map[i]->GetSprite(), m_player->GetDst()))
+			cout << "HIT";
+	}*/
+	
 
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
@@ -232,8 +274,30 @@ void GameState::Render()
 
 	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 
-	
+	//setRects({ 0,0,64,100 }, { 150,530,64,100 });
+	if (m_player->IsRolling())
+	{
+		m_player->GetSrc()->y = 136;
+		m_player->GetSrc()->h = 64;
+		
 
+	}
+	else
+	{
+		m_player->GetSrc()->y = 0;
+		m_player->GetSrc()->h = 100;
+		m_player->GetDst()->h = 100;
+	}
+
+	if (playerindex != 7)
+		playerindex++;
+	else playerindex = 0;
+
+	
+	m_player->GetSrc()->x = 64 * playerindex;
+
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
+	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), m_player->GetDst());
 
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 16, 32, 255);
 	// Render stuff.
@@ -245,6 +309,16 @@ void GameState::Render()
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 128, 0, 255);
 	SDL_RenderDrawLine(Engine::Instance().GetRenderer(), x1, y1, x2, y2);
 	// Draw anew.
+
+	for (unsigned i = 0; i < m_vec.size(); i++)
+	{
+		if (m_vec[i]->GetRect() != nullptr)
+		{
+			SDL_Rect obstacle = { m_vec[i]->GetRect()->x, m_vec[i]->GetRect()->y, m_vec[i]->GetRect()->w, m_vec[i]->GetRect()->h };
+			if (SDL_HasIntersection(&obstacle, m_player->GetDst()))
+				STMA::ChangeState(new LoseState);
+		}
+	}
 
 	if (dynamic_cast<GameState*>(STMA::GetStates().back()))
 		State::Render();
@@ -340,9 +414,17 @@ void LoseState::Update()
 {
 	SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
 
-	if (SDL_PointInRect(&m_mousePos, m_restart.GetDst()) && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+
+	if (SDL_PointInRect(&m_mousePos, m_restart.GetDst()))
 	{
-		STMA::ChangeState(new TitleState);
+		SDL_SetTextureColorMod(m_pRestart, 150, 150, 150);
+		if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			STMA::ChangeState(new TitleState);
+		}
+	}
+	else {
+		SDL_SetTextureColorMod(m_pRestart, 255, 255, 255);
 	}
 }
 
