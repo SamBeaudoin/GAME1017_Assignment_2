@@ -359,7 +359,9 @@ void GameState::Render()
 			SDL_Rect obstacle = { m_vec[i]->GetRect()->x, m_vec[i]->GetRect()->y, m_vec[i]->GetRect()->w, m_vec[i]->GetRect()->h };
 			if (SDL_HasIntersection(&obstacle, m_player->GetDst()) && m_isDead == false)
 			{
+				m_player->StopY();
 				m_player->SetAccelY(-JUMPFORCE);
+				//m_player->StopY();
 				m_isDead = true;
 			}
 		}
