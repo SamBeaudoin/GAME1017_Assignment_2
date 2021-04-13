@@ -143,6 +143,8 @@ void GameState::Enter()
 
 	// Load Sounds
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
+	m_pDeath = Mix_LoadWAV("sfxs/DeathSound.wav");
+	m_pJump = Mix_LoadWAV("sfxs/Boing.wav");
 	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
 	
 	// Player Placing
@@ -217,6 +219,7 @@ void GameState::Update()
 		{
 			if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
 			{
+				Mix_PlayChannel(-1, m_pJump, 0);
 				m_player->SetAccelY(-JUMPFORCE);
 				m_player->SetGrounded(false);
 			}
@@ -293,6 +296,21 @@ void GameState::Update()
 		if(m_player->GetDst()->y > 832)
 		STMA::ChangeState(new LoseState);
 
+		for (unsigned i = 0; i < m_vec.size(); i++)
+		{
+			if (m_vec[i]->GetRect() != nullptr)
+			{
+				SDL_Rect obstacle = { m_vec[i]->GetRect()->x, m_vec[i]->GetRect()->y, m_vec[i]->GetRect()->w, m_vec[i]->GetRect()->h };
+				if (SDL_HasIntersection(&obstacle, m_player->GetDst()) && m_isDead == false)
+				{
+					Mix_PlayChannel(-1, m_pDeath, 0);
+					m_player->StopY();
+					m_player->SetAccelY(-JUMPFORCE);
+					//m_player->StopY();
+					m_isDead = true;
+				}
+			}
+		}
 
 
 }
@@ -352,20 +370,7 @@ void GameState::Render()
 	for (unsigned int i = 0; i < m_vec.size(); i++)
 		m_vec[i]->Render();
 
-	for (unsigned i = 0; i < m_vec.size(); i++)
-	{
-		if (m_vec[i]->GetRect() != nullptr)
-		{
-			SDL_Rect obstacle = { m_vec[i]->GetRect()->x, m_vec[i]->GetRect()->y, m_vec[i]->GetRect()->w, m_vec[i]->GetRect()->h };
-			if (SDL_HasIntersection(&obstacle, m_player->GetDst()) && m_isDead == false)
-			{
-				m_player->StopY();
-				m_player->SetAccelY(-JUMPFORCE);
-				//m_player->StopY();
-				m_isDead = true;
-			}
-		}
-	}
+	
 
 	if (dynamic_cast<GameState*>(STMA::GetStates().back()))
 		State::Render();
