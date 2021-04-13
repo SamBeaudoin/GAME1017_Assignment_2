@@ -220,6 +220,8 @@ void GameState::Update()
 	// Check if first column of main vector goes out of bounds.
 	if (m_vec[0]->GetPos().x <= -128)
 	{
+		m_score++;
+		cout << m_score << endl;
 		// Pop the first vector element/column off.
 		delete m_vec[0]; // Deallocate Box via pointer.
 		m_vec[0] = nullptr; // Optional wrangle.

@@ -90,7 +90,7 @@ private:
 	Player* m_player = nullptr;	
 	int playerindex = 0;
 
-	
+	int m_score = 0;
 
 	// Music
 	Mix_Music* m_music;
