@@ -126,7 +126,7 @@ void GameState::Enter()
 	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
 	m_pDeath = Mix_LoadWAV("sfxs/DeathSound.wav");
 	m_pJump = Mix_LoadWAV("sfxs/Boing.wav");
-	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
+	
 	
 	// Player Placing
 	m_player = new Player;
@@ -150,7 +150,7 @@ void GameState::Enter()
 	m_map[1]->AddSprite(0, m_Obstacle2);
 	m_map[2]->AddSprite(0, m_Obstacle3);
 
-	/*m_map.emplace(3, new Box({ 1024, 384 }, true, 2));
+	/*  Example multiple Sprite Box
 	m_map[3]->AddSprite(0, { 1024, 498, 64, 128 }, { 255, 0, 0, 255 });
 	m_map[3]->AddSprite(1, { 1024, 128, 64, 128}, { 0, 0, 255, 255 });
 	m_map.emplace(4, new Box({ 1024, 384 }, true, 2));
@@ -288,15 +288,13 @@ void GameState::Render()
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture1, m_backgrounds[10].GetSrc(), m_backgrounds[10].GetDst());
 
 
-	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
+	if (m_player != nullptr) 
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 
-	//setRects({ 0,0,64,100 }, { 150,530,64,100 });
 	if (m_player->IsRolling())
 	{
 		m_player->GetSrc()->y = 136;
 		m_player->GetSrc()->h = 64;
-		
-
 	}
 	else
 	{
