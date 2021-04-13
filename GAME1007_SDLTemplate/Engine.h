@@ -11,8 +11,8 @@
 #define FPS 60
 #define WIDTH 1024
 #define HEIGHT 768
-#define JUMPFORCE 40.0
-#define GRAV 4.0
+#define JUMPFORCE 45.0
+#define GRAV 3.75
 using namespace std;
 
 //class Sprite
@@ -72,6 +72,7 @@ class Box // Obstacle parent/proxy for the Sprite.
 {
 private:
 	SDL_Point m_pos; // Position on screen. Y is optional.
+	SDL_Rect m_rectpos;
 	Sprite* m_pSprite; // Pointer to dynamic array of Sprites.
 	int m_numSprites;
 public:
@@ -82,6 +83,7 @@ public:
 	void Update();
 	void Render();
 	const SDL_Point GetPos() { return m_pos; }
+	SDL_Rect* GetRect();
 	void AddSprite(const int index, const SDL_Rect r, const SDL_Color c);
 	void AddSprite(const int index, const Sprite& s);
 };

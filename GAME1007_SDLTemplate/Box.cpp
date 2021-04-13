@@ -71,3 +71,13 @@ void Box::AddSprite(const int index, const Sprite& s)
 {
 	this->m_pSprite[index] = s;
 }
+
+SDL_Rect* Box::GetRect()
+{
+	if (m_numSprites == 1)
+	{
+		return m_pSprite[0].GetDst();
+	}
+	else
+		return nullptr;
+}
