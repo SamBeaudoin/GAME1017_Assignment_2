@@ -74,6 +74,7 @@ void GameState::Enter()
 {
 	cout << "Entering GameState..." << endl;
 	
+	m_isDead = false;
 	// Load Textures
 	m_pPlayerTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/player.png");
 
@@ -188,101 +189,108 @@ void GameState::Enter()
 
 void GameState::Update()
 {
-	// Background speed
-	m_backgrounds[0].GetDst()->x -= 0;
-	m_backgrounds[1].GetDst()->x -= 1;
-	m_backgrounds[2].GetDst()->x -= 1;
-	m_backgrounds[3].GetDst()->x -= 2;
-	m_backgrounds[4].GetDst()->x -= 2;
-	m_backgrounds[5].GetDst()->x -= 3;
-	m_backgrounds[6].GetDst()->x -= 3;
-	m_backgrounds[7].GetDst()->x -= 4;
-	m_backgrounds[8].GetDst()->x -= 4;
-	m_backgrounds[9].GetDst()->x -= 6;
-	m_backgrounds[10].GetDst()->x -= 6;
-	
-	// Wrap backgrounds
-	for (int i = 0; i < m_backgrounds.size(); i++)
+	if (!m_isDead)
 	{
-		if (m_backgrounds[i].GetDst()->x <= -1024)
-			m_backgrounds[i].GetDst()->x = 1024;
-	}
+		// Background speed
+		m_backgrounds[0].GetDst()->x -= 0;
+		m_backgrounds[1].GetDst()->x -= 1;
+		m_backgrounds[2].GetDst()->x -= 1;
+		m_backgrounds[3].GetDst()->x -= 2;
+		m_backgrounds[4].GetDst()->x -= 2;
+		m_backgrounds[5].GetDst()->x -= 3;
+		m_backgrounds[6].GetDst()->x -= 3;
+		m_backgrounds[7].GetDst()->x -= 4;
+		m_backgrounds[8].GetDst()->x -= 4;
+		m_backgrounds[9].GetDst()->x -= 6;
+		m_backgrounds[10].GetDst()->x -= 6;
 
-	//Parse player movement
-	m_player->SetRolling(false);
-	if (m_player != nullptr)
-	{
-		if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
+		// Wrap backgrounds
+		for (int i = 0; i < m_backgrounds.size(); i++)
 		{
-			m_player->SetAccelY(-JUMPFORCE);
-			m_player->SetGrounded(false);
+			if (m_backgrounds[i].GetDst()->x <= -1024)
+				m_backgrounds[i].GetDst()->x = 1024;
 		}
-		else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->IsGrounded())
-		{
-			m_player->SetRolling(true);
-		}
-		if (Engine::Instance().KeyDown(SDL_SCANCODE_A) && m_player->GetDst()->x > 20)
-		{
-			m_player->SetAccelX(-1.0);
-		}
-		else if (Engine::Instance().KeyDown(SDL_SCANCODE_D) && m_player->GetDst()->x < WIDTH - m_player->GetDst()->w && m_player->GetDst()->x < 800)
-		{
-			m_player->SetAccelX(1.0);
-		}
-	}
 
+		//Parse player movement
+		m_player->SetRolling(false);
+		if (m_player != nullptr)
+		{
+			if (Engine::Instance().KeyDown(SDL_SCANCODE_W) && m_player->IsGrounded())
+			{
+				m_player->SetAccelY(-JUMPFORCE);
+				m_player->SetGrounded(false);
+			}
+			else if (Engine::Instance().KeyDown(SDL_SCANCODE_S) && m_player->IsGrounded())
+			{
+				m_player->SetRolling(true);
+			}
+			if (Engine::Instance().KeyDown(SDL_SCANCODE_A) && m_player->GetDst()->x > 20)
+			{
+				m_player->SetAccelX(-1.0);
+			}
+			else if (Engine::Instance().KeyDown(SDL_SCANCODE_D) && m_player->GetDst()->x < WIDTH - m_player->GetDst()->w && m_player->GetDst()->x < 800)
+			{
+				m_player->SetAccelX(1.0);
+			}
+		}
+
+		if (playerindex != 7)
+			playerindex++;
+		else playerindex = 0;
+
+
+		if (m_player->GetDst()->y >= 530)
+		{
+			m_player->StopY();
+			m_player->SetY(530.0f);
+			m_player->SetGrounded(true);
+		}
+
+		if (m_player->IsRolling())
+		{
+			m_player->GetDst()->h = 64;
+			m_player->GetDst()->y = 566;
+		}
+
+
+		// Check if first column of main vector goes out of bounds.
+		if (m_vec[0]->GetPos().x <= -128)
+		{
+			m_score++;
+			cout << m_score << endl;
+			// Pop the first vector element/column off.
+			delete m_vec[0]; // Deallocate Box via pointer.
+			m_vec[0] = nullptr; // Optional wrangle.
+			m_vec.erase(m_vec.begin()); // Destroys first element of vector.
+			// Add a new Box element to the end.
+			if (m_gapCtr++ % m_gapMax == 0) // Add a new Box with obstacle(s).
+				m_vec.push_back(m_map[(rand() % 9)]->Clone()); // Pull random Box clone from map.
+			else m_vec.push_back(new Box({ 1024,384 }, false)); // Add empty Box proxy.
+		}
+		// Scroll the boxes.
+		for (unsigned int i = 0; i < m_vec.size(); i++)
+		{
+			m_vec[i]->Update();
+		}
+		/*for (unsigned i = 0; i < m_map.size(); i++)
+		{
+			if (SDL_HasIntersection(m_map[i]->GetSprite(), m_player->GetDst()))
+				cout << "HIT";
+		}*/
+
+	}
 	m_player->Update();
-	if (playerindex != 7)
-		playerindex++;
-	else playerindex = 0;
+		SDL_RenderClear(Engine::Instance().GetRenderer());
 
-
-	if (m_player->GetDst()->y >= 530)
-	{
-		m_player->StopY();
-		m_player->SetY(530.0f);
-		m_player->SetGrounded(true);
-	}
-
-	if (m_player->IsRolling())
-	{
-		m_player->GetDst()->h = 64;
-		m_player->GetDst()->y = 566;
-	}
-
-
-	// Check if first column of main vector goes out of bounds.
-	if (m_vec[0]->GetPos().x <= -128)
-	{
-		m_score++;
-		cout << m_score << endl;
-		// Pop the first vector element/column off.
-		delete m_vec[0]; // Deallocate Box via pointer.
-		m_vec[0] = nullptr; // Optional wrangle.
-		m_vec.erase(m_vec.begin()); // Destroys first element of vector.
-		// Add a new Box element to the end.
-		if (m_gapCtr++ % m_gapMax == 0) // Add a new Box with obstacle(s).
-			m_vec.push_back(m_map[(rand() % 9)]->Clone()); // Pull random Box clone from map.
-		else m_vec.push_back(new Box({ 1024,384 }, false)); // Add empty Box proxy.
-	}
-	// Scroll the boxes.
-	for (unsigned int i = 0; i < m_vec.size(); i++)
-	{
-		m_vec[i]->Update();
-	}
-	/*for (unsigned i = 0; i < m_map.size(); i++)
-	{
-		if (SDL_HasIntersection(m_map[i]->GetSprite(), m_player->GetDst()))
-			cout << "HIT";
-	}*/
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
+			STMA::PushState(new PauseState);
 	
-
-	SDL_RenderClear(Engine::Instance().GetRenderer());
-
-	if (Engine::Instance().KeyDown(SDL_SCANCODE_P))
-		STMA::PushState(new PauseState);
-
-	if (m_isDead)
+		if (m_isDead)
+		{
+			m_player->GetDst()->h = 64;
+			//m_player->GetDst()->y = 566;
+		}
+		if(m_player->GetDst()->y > 832)
 		STMA::ChangeState(new LoseState);
 
 
@@ -309,25 +317,35 @@ void GameState::Render()
 	if (m_player != nullptr) SDL_RenderCopyEx(Engine::Instance().GetRenderer(), m_pPlayerTexture, m_player->GetSrc(), m_player->GetDst(), 0, NULL, SDL_FLIP_NONE);
 
 	//setRects({ 0,0,64,100 }, { 150,530,64,100 });
-	if (m_player->IsRolling())
+	if (!m_isDead)
 	{
-		m_player->GetSrc()->y = 136;
-		m_player->GetSrc()->h = 64;
-		
+		if (m_player->IsRolling())
+		{
+			m_player->GetSrc()->y = 136;
+			m_player->GetSrc()->h = 64;
+
+
+		}
+		else
+		{
+			m_player->GetSrc()->y = 0;
+			m_player->GetSrc()->h = 100;
+			m_player->GetDst()->h = 100;
+		}
+		m_player->GetSrc()->x = 64 * playerindex;
 
 	}
 	else
 	{
-		m_player->GetSrc()->y = 0;
-		m_player->GetSrc()->h = 100;
-		m_player->GetDst()->h = 100;
+		m_player->GetSrc()->y = 236;
+		m_player->GetSrc()->x = 0;
+		m_player->GetSrc()->h = 64;
 	}
 
 	
 
 	
-	m_player->GetSrc()->x = 64 * playerindex;
-
+	
 
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 16, 32, 255);
 	// Render stuff.
@@ -339,8 +357,11 @@ void GameState::Render()
 		if (m_vec[i]->GetRect() != nullptr)
 		{
 			SDL_Rect obstacle = { m_vec[i]->GetRect()->x, m_vec[i]->GetRect()->y, m_vec[i]->GetRect()->w, m_vec[i]->GetRect()->h };
-			if (SDL_HasIntersection(&obstacle, m_player->GetDst()))
-				STMA::ChangeState(new LoseState);
+			if (SDL_HasIntersection(&obstacle, m_player->GetDst()) && m_isDead == false)
+			{
+				m_player->SetAccelY(-JUMPFORCE);
+				m_isDead = true;
+			}
 		}
 	}
 
