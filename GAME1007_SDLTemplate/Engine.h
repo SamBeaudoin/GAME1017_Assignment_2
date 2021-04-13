@@ -15,27 +15,6 @@
 #define GRAV 3.75
 using namespace std;
 
-//class Sprite
-//{
-//protected:
-//	SDL_Rect m_src; // Source rectangle.
-//	SDL_Rect m_dst; // Destination rectangle.
-//	int m_angle = 0;
-//public:
-//	void SetRects(SDL_Rect s, SDL_Rect d)
-//	{
-//		m_src = s;
-//		m_dst = d;
-//	}
-//	SDL_Rect* GetSrc()
-//	{
-//		return &m_src;
-//	}
-//	SDL_Rect* GetDst()
-//	{
-//		return &m_dst;
-//	}
-//};
 
 class Sprite // Represents visual component of Box.
 {
