@@ -31,6 +31,9 @@ private:
 	SDL_Texture* m_pTitle;
 	SDL_Texture* m_pStartButton;
 	SDL_Texture* m_pBGTexture;
+	SDL_Texture* m_pExitButton;
+
+	Sprite m_exit;
 	Sprite m_title;
 	Sprite m_start;
 	Sprite m_bg1;
@@ -129,6 +132,9 @@ public:
 	virtual void Resume();
 private:
 	SDL_Texture* m_pResume;
+	SDL_Texture* m_pExitButton;
+
+	Sprite m_exit;
 	Sprite m_resume;
 
 	// Mouse

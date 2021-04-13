@@ -22,6 +22,9 @@ void TitleState::Enter()
 	m_pTitle = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/title.png");
 	m_pStartButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/startbutton.png");
 	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
+	m_pExitButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Exit.png");
+
+	m_exit.SetRects({ 0, 0, 256, 128 }, { 312, 390, 400, 150 });
 	m_title.SetRects({ 0, 0, 500, 300 }, { 262, 75, 500, 300 });
 	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
 	m_start.SetRects({ 0, 0, 400, 200 }, { 312, 550, 400, 200 });
@@ -36,6 +39,18 @@ void TitleState::Update()
 {
 	SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
 
+	if (SDL_PointInRect(&m_mousePos, m_exit.GetDst()))
+	{
+		SDL_SetTextureColorMod(m_pExitButton, 150, 150, 150);
+		if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			exit(1);
+		}
+	}
+	else {
+		SDL_SetTextureColorMod(m_pExitButton, 255, 255, 255);
+	}
+
 	if (SDL_PointInRect(&m_mousePos, m_start.GetDst()))
 	{
 		SDL_SetTextureColorMod(m_pStartButton, 150,150, 150);
@@ -47,6 +62,7 @@ void TitleState::Update()
 	else {
 		SDL_SetTextureColorMod(m_pStartButton, 255, 255, 255);
 	}
+
 }
 
 void TitleState::Render()
@@ -54,7 +70,8 @@ void TitleState::Render()
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture, m_bg1.GetSrc(), m_bg1.GetDst());
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pTitle, m_title.GetSrc(), m_title.GetDst());
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pStartButton, m_start.GetSrc(), m_start.GetDst());
-	
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pExitButton, m_exit.GetSrc(), m_exit.GetDst());
+
 	State::Render();
 }
 
@@ -237,7 +254,7 @@ void GameState::Update()
 			}
 		}
 
-		if (playerindex != 7)
+		if (playerindex != 7&& m_player->IsGrounded())
 			playerindex++;
 		else playerindex = 0;
 
@@ -405,6 +422,9 @@ void PauseState::Enter()
 
 	cout << "Entering PauseState" << endl;
 	m_pResume = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/resume.png");
+	m_pExitButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Exit.png");
+
+	m_exit.SetRects({ 0, 0, 256, 128 }, { 362, 220, 300, 75 });
 	m_resume.SetRects({ 0,0,300,150}, { 362,300,300,150});
 }
 
@@ -417,9 +437,28 @@ void PauseState::Update()
 
 	SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
 
-	if (SDL_PointInRect(&m_mousePos, m_resume.GetDst()) && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+	if (SDL_PointInRect(&m_mousePos, m_exit.GetDst()))
 	{
-		STMA::PopState();
+		SDL_SetTextureColorMod(m_pExitButton, 150, 150, 150);
+		if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			exit(1);
+		}
+	}
+	else {
+		SDL_SetTextureColorMod(m_pExitButton, 255, 255, 255);
+	}
+
+	if (SDL_PointInRect(&m_mousePos, m_resume.GetDst()))
+	{
+		SDL_SetTextureColorMod(m_pResume, 150, 150, 150);
+		if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			STMA::PopState();
+		}
+	}
+	else {
+		SDL_SetTextureColorMod(m_pResume, 255, 255, 255);
 	}
 }
 
@@ -432,7 +471,8 @@ void PauseState::Render()
 
 	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rect);
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pResume, m_resume.GetSrc(), m_resume.GetDst());
-	
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pExitButton, m_exit.GetSrc(), m_exit.GetDst());
+
 	State::Render();
 }
 
@@ -454,7 +494,7 @@ void LoseState::Enter()
 	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
 	m_pRestart = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/restart.png");
 	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
-	m_restart.SetRects({ 0,0,200,400 }, { 412,150,200,400 });
+	m_restart.SetRects({ 0,0,200,400 }, { 412,50,200,400 });
 
 	m_music = Mix_LoadMUS("sfxs/ChildrensPolka.mp3");
 
