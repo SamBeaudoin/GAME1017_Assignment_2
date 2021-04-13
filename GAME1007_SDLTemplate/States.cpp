@@ -202,6 +202,10 @@ void GameState::Update()
 	}
 
 	m_player->Update();
+	if (playerindex != 7)
+		playerindex++;
+	else playerindex = 0;
+
 
 	if (m_player->GetDst()->y >= 530)
 	{
@@ -289,26 +293,16 @@ void GameState::Render()
 		m_player->GetDst()->h = 100;
 	}
 
-	if (playerindex != 7)
-		playerindex++;
-	else playerindex = 0;
+	
 
 	
 	m_player->GetSrc()->x = 64 * playerindex;
 
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 128, 128, 128, 255);
-	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), m_player->GetDst());
 
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 16, 32, 255);
 	// Render stuff.
 	for (unsigned int i = 0; i < m_vec.size(); i++)
 		m_vec[i]->Render();
-	// Render ground line.
-	int x1 = 0, x2 = 1024, y1, y2;
-	y1 = y2 = 448;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 128, 0, 255);
-	SDL_RenderDrawLine(Engine::Instance().GetRenderer(), x1, y1, x2, y2);
-	// Draw anew.
 
 	for (unsigned i = 0; i < m_vec.size(); i++)
 	{
