@@ -70,6 +70,7 @@ private:
 	SDL_Texture* m_pBGTexture4;
 	SDL_Texture* m_pBGTexture5;
 	SDL_Texture* m_pBGTexture6;
+	SDL_Texture* m_pBGTexture7;
 
 	SDL_Texture* m_pObstacle1;
 	SDL_Texture* m_pObstacle2;
@@ -87,6 +88,7 @@ private:
 	Sprite m_backgroundLayer04[2];
 	Sprite m_backgroundLayer05[2];
 	Sprite m_backgroundLayer06;
+	Sprite m_backgroundLayer07[2];
 
 	Sprite m_Obstacle1;
 	Sprite m_Obstacle2;

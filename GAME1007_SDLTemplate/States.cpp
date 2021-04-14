@@ -100,6 +100,7 @@ void GameState::Enter()
 	m_pBGTexture4 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer04.png");
 	m_pBGTexture5 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer05.png");
 	m_pBGTexture6 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/layer06.png");
+	m_pBGTexture7 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/pinkCloud.png");
 
 	m_pObstacle1 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
 	m_pObstacle2 = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/obstacle.png");
@@ -123,6 +124,9 @@ void GameState::Enter()
 	m_backgroundLayer05[1].SetRects({ 0,0,1920,1080 }, { 1024,0,1024,768 });
 	m_backgroundLayer06.SetRects({ 0,0,1920,1080 }, { 0,0,1024,768 });
 
+	m_backgroundLayer07[0].SetRects({ 0,0,666,375 }, { 0,125,1024,768 });
+	m_backgroundLayer07[1].SetRects({ 0,0,666,375 }, { 1024,125,1024,768 });
+
 	//m_backgrounds.push_back(m_backgroundLayer01[0]);
 
 	m_backgrounds.push_back(m_backgroundLayer06);		// sky
@@ -136,6 +140,9 @@ void GameState::Enter()
 	m_backgrounds.push_back(m_backgroundLayer02[0]);	// Cake
 	m_backgrounds.push_back(m_backgroundLayer01[1]);
 	m_backgrounds.push_back(m_backgroundLayer01[0]);	// Ground
+	m_backgrounds.push_back(m_backgroundLayer07[0]);	
+	m_backgrounds.push_back(m_backgroundLayer07[1]);	// Cotton Candy
+	
 
 	m_Obstacle1.SetRects({ 0,0,64,128 }, { 600,436,64,128 });
 	m_Obstacle2.SetRects({ 64,0,64,128 }, { 600,436,64,128 });
@@ -221,6 +228,8 @@ void GameState::Update()
 		m_backgrounds[8].GetDst()->x -= 4;
 		m_backgrounds[9].GetDst()->x -= 6;
 		m_backgrounds[10].GetDst()->x -= 6;
+		m_backgrounds[11].GetDst()->x -= 8;
+		m_backgrounds[12].GetDst()->x -= 8;
 
 		// Wrap backgrounds
 		for (int i = 0; i < m_backgrounds.size(); i++)
@@ -290,16 +299,6 @@ void GameState::Update()
 		{
 			m_vec[i]->Update();
 		}
-		/*for (unsigned i = 0; i < m_map.size(); i++)
-		{
-			if (SDL_HasIntersection(m_map[i]->GetSprite(), m_player->GetDst()))
-				cout << "HIT";
-		}*/
-
-		
-
-
-
 	}
 	m_player->Update();
 		SDL_RenderClear(Engine::Instance().GetRenderer());
@@ -395,7 +394,9 @@ void GameState::Render()
 	for (unsigned int i = 0; i < m_vec.size(); i++)
 		m_vec[i]->Render();
 
-	
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture7, m_backgrounds[11].GetSrc(), m_backgrounds[11].GetDst());
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pBGTexture7, m_backgrounds[12].GetSrc(), m_backgrounds[12].GetDst());
+
 
 	if (dynamic_cast<GameState*>(STMA::GetStates().back()))
 		State::Render();
