@@ -19,14 +19,14 @@ void TitleState::Enter()
 {
 	cout << "Entering TitleState..." << endl;
 
-	m_pTitle = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/title.png");
+	m_pTitle = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Cake_Runner.png");
 	m_pStartButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/startbutton.png");
-	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
+	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/sky1.png");
 	m_pExitButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Exit.png");
 
 	m_exit.SetRects({ 0, 0, 256, 128 }, { 312, 600, 400, 150 });
-	m_title.SetRects({ 0, 0, 500, 300 }, { 262, 75, 500, 300 });
-	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
+	m_title.SetRects({ 0, 0, 680, 472 }, { 262, 75, 500, 300 });
+	m_bg1.SetRects({ 0,0,1920,1200 }, { 0,0,1024,768 });
 	m_start.SetRects({ 0, 0, 400, 200 }, { 312, 390, 400, 200 });
 
 	m_music = Mix_LoadMUS("sfxs/ChildrensPolka.mp3");
@@ -158,7 +158,7 @@ void GameState::Enter()
 	m_Obstacle9.setTexture(m_pObstacle9);
 
 	// Load Sounds
-	m_music = Mix_LoadMUS("sfxs/space_walk.mp3");
+	m_music = Mix_LoadMUS("sfxs/ChildrensTheme.mp3");
 	m_pDeath = Mix_LoadWAV("sfxs/DeathSound.wav");
 	m_pJump = Mix_LoadWAV("sfxs/Boing.wav");
 	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
@@ -500,9 +500,9 @@ LoseState::LoseState() {}
 void LoseState::Enter()
 {
 	cout << "Entering LoseState..." << endl;
-	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
+	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/sky1.png");
 	m_pRestart = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/restart.png");
-	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
+	m_bg1.SetRects({ 0,0,1920,1200 }, { 0,0,1024,768 });
 	m_restart.SetRects({ 0,0,200,400 }, { 412,20,200,400 });
 
 	m_music = Mix_LoadMUS("sfxs/ChildrensPolka.mp3");
