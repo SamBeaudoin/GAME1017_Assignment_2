@@ -28,6 +28,10 @@ int Engine::Init(const char* title, int xPos, int yPos, int width, int height, i
 
 				}
 				else return false; // Mixer init failed
+				if (TTF_Init() == 0)
+				{
+				}
+				else return false; // Font init failed.
 			}
 			else return false; // Renderer creation failed.
 		}

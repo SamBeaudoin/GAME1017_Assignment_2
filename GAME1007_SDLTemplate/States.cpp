@@ -24,13 +24,12 @@ void TitleState::Enter()
 	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
 	m_pExitButton = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/Exit.png");
 
-	m_exit.SetRects({ 0, 0, 256, 128 }, { 312, 390, 400, 150 });
+	m_exit.SetRects({ 0, 0, 256, 128 }, { 312, 600, 400, 150 });
 	m_title.SetRects({ 0, 0, 500, 300 }, { 262, 75, 500, 300 });
 	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
-	m_start.SetRects({ 0, 0, 400, 200 }, { 312, 550, 400, 200 });
+	m_start.SetRects({ 0, 0, 400, 200 }, { 312, 390, 400, 200 });
 
 	m_music = Mix_LoadMUS("sfxs/ChildrensPolka.mp3");
-
 	Mix_PlayMusic(m_music, -1);	// 0-n for # of loops, -1 for infinite
 	Mix_VolumeMusic(20);	// 0 - 128
 }
@@ -163,7 +162,7 @@ void GameState::Enter()
 	m_pDeath = Mix_LoadWAV("sfxs/DeathSound.wav");
 	m_pJump = Mix_LoadWAV("sfxs/Boing.wav");
 	//m_eDeath = Mix_LoadWAV("sfxs/Example_Sound_Effect.wav");
-	
+	m_pfont = TTF_OpenFont("font/SuperLegendBoy.ttf", 36);
 	// Player Placing
 	m_player = new Player;
 	m_player->SetRects({ 0,0,64,100}, { 150,530,64,100 }); 
@@ -277,7 +276,6 @@ void GameState::Update()
 		if (m_vec[0]->GetPos().x <= -128)
 		{
 			m_score++;
-			cout << m_score << endl;
 			// Pop the first vector element/column off.
 			delete m_vec[0]; // Deallocate Box via pointer.
 			m_vec[0] = nullptr; // Optional wrangle.
@@ -297,6 +295,10 @@ void GameState::Update()
 			if (SDL_HasIntersection(m_map[i]->GetSprite(), m_player->GetDst()))
 				cout << "HIT";
 		}*/
+
+		
+
+
 
 	}
 	m_player->Update();
@@ -378,6 +380,12 @@ void GameState::Render()
 	}
 
 	
+	m_pFontSurf = TTF_RenderText_Solid(m_pfont, (to_string(m_score)).c_str(), { 255,255,255,255 });
+	SDL_DestroyTexture(m_pFontTexture);
+	m_pFontTexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), m_pFontSurf);
+	m_textRect = { 25,25,m_pFontSurf->w,m_pFontSurf->h };
+	SDL_FreeSurface(m_pFontSurf);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pFontTexture, NULL, &m_textRect);
 
 	
 	
@@ -406,6 +414,7 @@ void GameState::Exit()
 	SDL_DestroyTexture(m_pBGTexture4);
 	SDL_DestroyTexture(m_pBGTexture5);
 	SDL_DestroyTexture(m_pBGTexture6);
+	TTF_CloseFont(m_pfont);
 	Mix_FreeMusic(m_music);
 }
 
@@ -494,7 +503,7 @@ void LoseState::Enter()
 	m_pBGTexture = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/backgroundSpace.png");
 	m_pRestart = IMG_LoadTexture(Engine::Instance().GetRenderer(), "img/restart.png");
 	m_bg1.SetRects({ 0,0,1024,768 }, { 0,0,1024,768 });
-	m_restart.SetRects({ 0,0,200,400 }, { 412,50,200,400 });
+	m_restart.SetRects({ 0,0,200,400 }, { 412,20,200,400 });
 
 	m_music = Mix_LoadMUS("sfxs/ChildrensPolka.mp3");
 

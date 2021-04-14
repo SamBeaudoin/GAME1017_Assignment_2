@@ -55,6 +55,12 @@ public:
 	virtual void Resume();
 
 private:
+
+
+	TTF_Font* m_pfont;
+	SDL_Surface* m_pFontSurf;
+	SDL_Texture* m_pFontTexture;
+	SDL_Rect m_textRect; //The Size of the text element. // w/h are automatically from texture;
 	
 	SDL_Texture* m_pPlayerTexture;
 
@@ -113,9 +119,6 @@ private:
 	
 	Mix_Chunk* m_pDeath;
 	Mix_Chunk* m_pJump;
-	
-
-	int m_speed = 5; 
 	
 
 	bool m_isDead;
